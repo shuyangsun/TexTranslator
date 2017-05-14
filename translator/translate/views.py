@@ -1,6 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 import json
+from django.views.decorators.csrf import csrf_exempt
+
+
 
 """
 This is a text translator using Watson API.
@@ -181,14 +184,22 @@ if __name__ == '__main__':
 
 # Create your views here.
 
-def translate(request, src, target, text):
-    translate_languagte(src, target, text)
+@csrf_exempt
+def translate(request):
+    json_data = None
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+
+    src = json_data['src']
+    dst = json_data['dst']
+    text = json_data['text']
+    translate_languagte(src, dst, text)
     global result
     while result is None:
         pass
     response_data = {
         'src': src,
-        'target': target,
+        'target': dst,
         'text': result
     }
     result = None
@@ -196,7 +207,13 @@ def translate(request, src, target, text):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-def detect(request, text):
+@csrf_exempt
+def detect(request):
+    json_data = None
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+
+    text = json_data['text']
     detect_languagte(text)
     global result
     while result is None:
@@ -209,10 +226,22 @@ def detect(request, text):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-def locale(request, language):
-    lower_case = language.lower()
+@csrf_exempt
+def locale(request):
+    json_data = None
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+
+    text = json_data['text']
+    lower_case = text.lower()
     final_key = lower_case.replace(' ', '')
-    response_data = {
-        'text': lan_to_locale_dict[final_key]
-    }
+    res_locale = lan_to_locale_dict[final_key]
+    if res_locale is not None:
+        response_data = {
+            'text': lan_to_locale_dict[final_key]
+        }
+    else:
+        response_data = {
+            'text': 'en'
+        }
     return HttpResponse(json.dumps(response_data), content_type="application/json")
