@@ -23,7 +23,17 @@ pnconfig.ssl = False
 channel_detection = 'pubnub-lan-detector'
 channel_translation = 'pubnub-translator'
 
+# PubNub Result
 result = None
+
+# Dictionary for language to locale
+lan_to_locale_dict = {
+    'english': 'en',
+    'japanese': 'ja',
+    'chinese': 'zh',
+    'french': 'fr',
+    'spanish': 'es'
+}
 
 # PubNub Language Detection
 
@@ -196,4 +206,13 @@ def detect(request, text):
     }
     result = None
 
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def locale(request, language):
+    lower_case = language.lower()
+    final_key = lower_case.replace(' ', '')
+    response_data = {
+        'text': lan_to_locale_dict[final_key]
+    }
     return HttpResponse(json.dumps(response_data), content_type="application/json")
