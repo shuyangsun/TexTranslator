@@ -7,7 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import play.db.jpa.Model;
+import utilities.WebUtils;
 
 @Entity
 public class Account extends Model{
@@ -77,6 +82,45 @@ public class Account extends Model{
 
 	public void setLinked_account(Account linked_account) {
 		this.linked_account = linked_account;
+	}
+	
+	public static Account createNewAccount(JsonObject requestBody, String realNumber, Account linkedAccount){
+		String fakeNumber = getFakeNumber();
+		
+		
+		String languageString = "en";
+		Language language = Language.find("name = ?1 OR language_code = ?2", languageString.toLowerCase(), languageString.toLowerCase()).first();
+		
+		if (language == null){
+			//TODO handle this case
+			return null;
+		}
+		
+		if(fakeNumber == null){
+			return null;
+		}
+		
+		WebUtils.createNewPhoneNumber(fakeNumber);
+		
+		Account account = new Account(realNumber, fakeNumber, language, linkedAccount);
+		account.save();
+		
+		return account;
+	}
+	
+	private static String getFakeNumber() {
+		JsonObject availableNumbers = WebUtils.getAvailableNumbers();
+		
+		JsonArray numbers = availableNumbers.get("numbers").getAsJsonArray();
+		
+		for(JsonElement numberJsonElement: numbers){
+			JsonObject numberJsonObject = numberJsonElement.getAsJsonObject();
+			
+			String msisdn = numberJsonObject.get("msisdn").getAsString();
+			return msisdn;
+		}
+		
+		return null;
 	}
 	
 	

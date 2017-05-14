@@ -76,12 +76,16 @@ public class Application extends Controller {
     	System.out.println(requestBodyString);
     	JsonObject requestBody = (requestBodyString != null) ? parser.parse(requestBodyString).getAsJsonObject() : null;
 		
-    	String realNumber = requestBody.get("msisdn").getAsString();
-    	String proxyNumber = requestBody.get("to").getAsString();
+    	String senderNumber = requestBody.get("msisdn").getAsString();
+    	String receivingNumber = requestBody.get("to").getAsString();
     	
-    	if(proxyNumber.equals(adminNumber)){
-    		AdminHandler.process(requestBody, realNumber, proxyNumber);
+    	if(receivingNumber.equals(adminNumber)){
+    		AdminHandler.process(requestBody, senderNumber, receivingNumber);
     	}
+    	else{
+    		ProxyHandler.process(requestBody,senderNumber,receivingNumber);
+    	}
+    	
     	renderJSON(requestBody);
     	
     }

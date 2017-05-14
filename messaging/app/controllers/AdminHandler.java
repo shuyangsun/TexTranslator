@@ -20,9 +20,9 @@ public class AdminHandler {
 		}
 		
 		else{
-			String newNumber = createNewAccount(requestBody, realNumber, proxyNumber);
+			Account newNumber = Account.createNewAccount(requestBody, realNumber, null);
 			if(newNumber != null){
-				WebUtils.sendMessage(adminNumber, realNumber,"Hi! Your new number is " + newNumber);
+				WebUtils.sendMessage(adminNumber, realNumber,"Hi! Your new number is " + newNumber.getProxyPhoneNumber());
 			}
 			
 		}
@@ -30,44 +30,5 @@ public class AdminHandler {
 		
 	}
 
-	
-	private static String createNewAccount(JsonObject requestBody, String realNumber, String proxyNumber){
-		String fakeNumber = getFakeNumber();
-		
-		
-		String languageString = "en";
-		Language language = Language.find("name = ?1 OR language_code = ?2", languageString.toLowerCase(), languageString.toLowerCase()).first();
-		
-		if (language == null){
-			//TODO handle this case
-			return null;
-		}
-		
-		if(fakeNumber == null){
-			return null;
-		}
-		
-		WebUtils.createNewPhoneNumber(fakeNumber);
-		
-		Account account = new Account(realNumber, fakeNumber, language, null);
-		account.save();
-		
-		return fakeNumber;
-	}
-	
-	private static String getFakeNumber() {
-		JsonObject availableNumbers = WebUtils.getAvailableNumbers();
-		
-		JsonArray numbers = availableNumbers.get("numbers").getAsJsonArray();
-		
-		for(JsonElement numberJsonElement: numbers){
-			JsonObject numberJsonObject = numberJsonElement.getAsJsonObject();
-			
-			String msisdn = numberJsonObject.get("msisdn").getAsString();
-			return msisdn;
-		}
-		
-		return null;
-	}
 
 }
