@@ -33,7 +33,6 @@ result = None
 lan_to_locale_dict = {
     'english': 'en',
     'japanese': 'ja',
-    'chinese': 'zh',
     'french': 'fr',
     'spanish': 'es'
 }
@@ -233,15 +232,17 @@ def locale(request):
         json_data = json.loads(request.body)
 
     text = json_data['text']
+    text = text.split()[1]
     lower_case = text.lower()
-    final_key = lower_case.replace(' ', '')
-    res_locale = lan_to_locale_dict[final_key]
+    res_locale = lan_to_locale_dict[lower_case]
     if res_locale is not None:
         response_data = {
-            'text': lan_to_locale_dict[final_key]
+            'lang_name': text,
+            'text': lan_to_locale_dict[lower_case]
         }
     else:
         response_data = {
+            'lang_name': 'English',
             'text': 'en'
         }
     return HttpResponse(json.dumps(response_data), content_type="application/json")
