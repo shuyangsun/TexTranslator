@@ -15,6 +15,9 @@ pnconfig.subscribe_key = 'sub-c-79ad0e10-382b-11e7-ae4f-02ee2ddab7fe'
 pnconfig.publish_key = 'pub-c-55835b2a-73bc-42e7-8599-3b399f82fbf7'
 pnconfig.ssl = False
 
+channel_detection = 'pubnub-lan-detector'
+channel_translation = 'pubnub-translator'
+
 
 # PubNub Language Detection
 
@@ -46,7 +49,7 @@ class LanguageDetectionCallback(SubscribeCallback):
             # Connect event. You can do stuff like publish, and know you'll get it.
             # Or just use the connected event to confirm you are subscribed for
             # UI / internal notifications, etc
-            pubnub.publish().channel("pubnub-lan-detector").message({
+            pubnub.publish().channel(channel_detection).message({
                 'text': self._text
             }).async(language_detection_callback)
         elif status.category == PNStatusCategory.PNReconnectedCategory:
@@ -95,7 +98,7 @@ class LanguageTranslationCallback(SubscribeCallback):
             # Connect event. You can do stuff like publish, and know you'll get it.
             # Or just use the connected event to confirm you are subscribed for
             # UI / internal notifications, etc
-            pubnub.publish().channel("pubnub-translator").message({
+            pubnub.publish().channel(channel_translation).message({
                 'src': self._src,
                 'target': self._target,
                 'text': self._text
@@ -118,16 +121,15 @@ class LanguageTranslationCallback(SubscribeCallback):
 
 def detect_languagte(text):
     pubnub_detection.add_listener(LanguageDetectionCallback(text))
-    pubnub_detection.subscribe().channels('pubnub-lan-detector').execute()
+    pubnub_detection.subscribe().channels(channel_detection).execute()
 
 
 def translate_languagte(src, target, text):
     pubnub_translation.add_listener(LanguageTranslationCallback(src, target, text))
-    pubnub_translation.subscribe().channels('pubnub-translator').execute()
+    pubnub_translation.subscribe().channels(channel_translation).execute()
 
 
 # Main Function
 
 if __name__ == '__main__':
-    detect_languagte('你好')
-    translate_languagte('en', 'fr', 'What are you doing?')
+    pass
