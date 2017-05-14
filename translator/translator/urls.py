@@ -20,5 +20,7 @@ from translate import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^translate', views.index),
+    url(r'^detect/(?P<text>\w{0,50})/$', views.detect),
+    url(r'^translate/(?P<src>\w{0,50})/(?P<target>\w{0,50})/(?P<text>\w{0,50})/$', views.translate),
+    url(r'^locale/(?P<language>\w{0,50})/$', views.locale)
 ]
