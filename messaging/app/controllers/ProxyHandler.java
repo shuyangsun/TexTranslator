@@ -22,11 +22,21 @@ public class ProxyHandler {
 		
 		String message = requestBody.get("text").getAsString();
 		
-		System.out.println(message);
+		String sourceLanguage = sendingAccount.getPreferredLanguage().getLanguageCode();
+		String destLanguage = receivingAccount.getPreferredLanguage().getLanguageCode();
+		
+		JsonObject body = new JsonObject();
+		body.addProperty("src", sourceLanguage);
+		body.addProperty("dst", destLanguage);
+		body.addProperty("text",message);
+		
+		if(!sourceLanguage.equals(destLanguage)){
+			message += "\n\n" +  WebUtils.getTranslation(body);
+		} 
 		
 		WebUtils.sendMessage(sendingAccount.getProxyPhoneNumber(), receivingAccount.getRealPhoneNumber(), message);
-		
-		
 	}
+
+
 
 }

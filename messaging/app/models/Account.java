@@ -88,12 +88,20 @@ public class Account extends Model{
 		String fakeNumber = getFakeNumber();
 		
 		
-		String languageString = "en";
-		Language language = Language.find("name = ?1 OR language_code = ?2", languageString.toLowerCase(), languageString.toLowerCase()).first();
+		String lang = requestBody.get("text").getAsString();
+		
+		String detectedLanguage = WebUtils.detectLanguage(lang);
+		if(detectedLanguage != null){
+			lang = detectedLanguage;
+		}
+		else{
+			lang = "en";
+		}
+
+		Language language = Language.find("name = ?1 OR language_code = ?2", lang, lang).first();
 		
 		if (language == null){
-			//TODO handle this case
-			return null;
+			language = Language.find("name = ?1", "en").first(); 
 		}
 		
 		if(fakeNumber == null){

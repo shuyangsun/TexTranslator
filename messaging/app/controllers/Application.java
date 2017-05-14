@@ -59,16 +59,6 @@ public class Application extends Controller {
     }
     
     
-    /*{
-    	  "msisdn": "12039484797",
-    	  "to": "12035338290",
-    	  "messageId": "0C0000003289E2FB",
-    	  "text": "Woah",
-    	  "type": "text",
-    	  "keyword": "WOAH",
-    	  "message-timestamp": "2017-05-14 00:40:50"
-    	}*/
-    
     public static void receiveWebhookRequest(){
     	JsonParser parser = new JsonParser();
 		

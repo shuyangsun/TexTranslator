@@ -8,6 +8,7 @@ import java.net.URL;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import play.libs.WS;
 import play.libs.WS.HttpResponse;
@@ -47,5 +48,46 @@ public class WebUtils {
 		
 		WSRequest request = WS.url(url);
 		HttpResponse response = request.post();
+	}
+
+	public static String getTranslation(JsonObject body) {
+		String translationHost = "http://d46321ae.ngrok.io";
+		String url = translationHost + "/translate";
+		
+		WSRequest request = WS.url(url);
+		request.setHeader("Accept", "application/json");
+		request.body = body;
+		
+		HttpResponse response = request.post();
+		
+		String responseString = response.getString();
+		JsonParser parser = new JsonParser();
+		
+    	JsonObject responseJsonObject =  parser.parse(responseString).getAsJsonObject();
+		
+		return responseJsonObject.get("text").getAsString();
+	}
+
+	public static String detectLanguage(String langString) {
+		JsonObject body = new JsonObject();
+		
+		body.addProperty("text", langString);
+		
+		String translationHost = "http://d46321ae.ngrok.io";
+		String url = translationHost + "/detect";
+		
+		WSRequest request = WS.url(url);
+		request.setHeader("Accept", "application/json");
+		request.body = body;
+		
+		HttpResponse response = request.post();
+		
+		String responseString = response.getString();
+		JsonParser parser = new JsonParser();
+		
+    	JsonObject responseJsonObject =  parser.parse(responseString).getAsJsonObject();
+		System.out.println(responseString);
+		return (responseJsonObject.has("text") && responseJsonObject.get("text").isJsonPrimitive()) ? 
+				responseJsonObject.get("text").getAsString() : null;
 	}
 }
