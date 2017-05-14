@@ -171,14 +171,14 @@ if __name__ == '__main__':
 
 # Create your views here.
 
-def index(request, word1,lang1,lang2):
-    translate_languagte(word1, lang1, lang2)
+def translate(request, src, target, text):
+    translate_languagte(src, target, text)
     global result
     while result is None:
         pass
     response_data = {
-        'src': lang1,
-        'target': lang2,
+        'src': src,
+        'target': target,
         'text': result
     }
     result = None
@@ -186,8 +186,8 @@ def index(request, word1,lang1,lang2):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-def index(request, word1):
-    detect_languagte(word1)
+def detect(request, text):
+    detect_languagte(text)
     global result
     while result is None:
         pass
