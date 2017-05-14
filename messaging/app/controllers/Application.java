@@ -12,7 +12,7 @@ import play.mvc.Controller;
 
 public class Application extends Controller {
 
-	final private String adminNumber = "12035338290";
+	final private static String adminNumber = "12035338290";
 	
     public static void index() {
         render();
@@ -58,6 +58,17 @@ public class Application extends Controller {
 		renderJSON(output.toString());
     }
     
+    
+    /*{
+    	  "msisdn": "12039484797",
+    	  "to": "12035338290",
+    	  "messageId": "0C0000003289E2FB",
+    	  "text": "Woah",
+    	  "type": "text",
+    	  "keyword": "WOAH",
+    	  "message-timestamp": "2017-05-14 00:40:50"
+    	}*/
+    
     public static void receiveWebhookRequest(){
     	JsonParser parser = new JsonParser();
 		
@@ -65,9 +76,17 @@ public class Application extends Controller {
     	System.out.println(requestBodyString);
     	JsonObject requestBody = (requestBodyString != null) ? parser.parse(requestBodyString).getAsJsonObject() : null;
 		
+    	String realNumber = requestBody.get("msisdn").getAsString();
+    	String proxyNumber = requestBody.get("to").getAsString();
+    	
+    	if(proxyNumber.equals(adminNumber)){
+    		AdminHandler.process(requestBody, realNumber, proxyNumber);
+    	}
     	renderJSON(requestBody);
     	
     }
+    
+    
     
     public static void createAccount(){
     	JsonParser parser = new JsonParser();
@@ -89,11 +108,5 @@ public class Application extends Controller {
 			//TODO handle this case
 			return;
 		}
-		
-		
-	
-		
-		
-		
     }
 }

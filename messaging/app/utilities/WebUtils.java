@@ -40,4 +40,12 @@ public class WebUtils {
 		
 		return listOfNumbers;	
 	}
+	
+	public static void sendMessage(String sendingNumber, String receivingNumber, String message){
+		message = message.replaceAll("\\s+","+");
+		String url = String.format("https://rest.nexmo.com/sms/json?api_key=%s&api_secret=%s&to=%s&from=%s&text=%s", nexmoApiKey,nexmoApiSecret,receivingNumber,sendingNumber,message);
+		
+		WSRequest request = WS.url(url);
+		HttpResponse response = request.post();
+	}
 }

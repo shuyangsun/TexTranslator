@@ -1,5 +1,7 @@
 package models;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -34,6 +36,7 @@ public class Account extends Model{
 		this.proxyPhoneNumber = proxyPhoneNumber;
 		this.preferredLanguage = preferredLanguage;
 		this.linked_account = linked_account;
+		this.uuid = UUID.randomUUID().toString();
 	}
 
 	public String getUuid() {
