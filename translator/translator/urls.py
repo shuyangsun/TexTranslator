@@ -20,5 +20,5 @@ from translate import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^translate', views.index),
+    url(r'^detection/(?P<word1>\w{0,50})/$', views.index),
 ]
