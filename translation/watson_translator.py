@@ -2,6 +2,7 @@
 This is a text translator using Watson API.
 """
 
+import sys
 from pubnub.callbacks import SubscribeCallback
 from pubnub.enums import PNStatusCategory
 from pubnub.pnconfiguration import PNConfiguration
@@ -22,6 +23,7 @@ channel_translation = 'pubnub-translator'
 # PubNub Language Detection
 
 pubnub_detection = PubNub(pnconfig)
+detection_listener = None
 
 
 def language_detection_callback(envelope, status):
@@ -64,11 +66,15 @@ class LanguageDetectionCallback(SubscribeCallback):
     def message(self, pubnub, message):
         # Handle new message stored in message.message
         print(message.message['text'])
+        global detection_listener
+        pubnub.unsubscribe().channels(channel_detection).execute()
+        pubnub.remove_listener(detection_listener)
 
 
 # PubNub Language Translation
 
 pubnub_translation = PubNub(pnconfig)
+translation_listener = None
 
 
 def language_translation_callback(envelope, status):
@@ -115,21 +121,42 @@ class LanguageTranslationCallback(SubscribeCallback):
     def message(self, pubnub, message):
         # Handle new message stored in message.message
         print(message.message['text'])
+        global translation_listener
+        pubnub.unsubscribe().channels(channel_translation).execute()
+        pubnub.remove_listener(translation_listener)
 
 
 # Public Functions
 
 def detect_languagte(text):
-    pubnub_detection.add_listener(LanguageDetectionCallback(text))
+    global detection_listener
+    detection_listener = LanguageDetectionCallback(text)
+    pubnub_detection.add_listener(detection_listener)
     pubnub_detection.subscribe().channels(channel_detection).execute()
 
 
 def translate_languagte(src, target, text):
-    pubnub_translation.add_listener(LanguageTranslationCallback(src, target, text))
+    global translation_listener
+    translation_listener = LanguageTranslationCallback(src, target, text)
+    pubnub_translation.add_listener(translation_listener)
     pubnub_translation.subscribe().channels(channel_translation).execute()
 
 
 # Main Function
 
 if __name__ == '__main__':
-    pass
+    argv = sys.argv
+    if len(argv) <= 1:
+        print('No argument provided for translator.')
+    else:
+        config = argv[1]
+        if config == '--help':
+            print("""--detect [text]
+--translate [src, target, text]""")
+        if config == '--detect':
+            detect_languagte(argv[2])
+            detect_languagte(argv[2])
+        elif config == '--translate':
+            translate_languagte(argv[2], argv[3], argv[4])
+            translate_languagte(argv[2], argv[3], argv[4])
+
