@@ -25,7 +25,7 @@ SECRET_KEY = 'toil(nwhm1x9n8ij1wa_q&ddizb_o%^4i$#&+gw&r_toe!q3@0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["d46321ae.ngrok.io"]
 
 
 # Application definition
