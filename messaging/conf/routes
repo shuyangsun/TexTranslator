@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                                       Application.index
+POST	/										Application.receiveWebhookRequest
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
@@ -11,5 +12,10 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-# Catch all
-*       /{controller}/{action}                  {controller}.{action}
+
+GET		/lang									Application.getLanguages
+POST 	/lang									Application.createLanguage
+
+GET 	/numbers								Application.getNumbers
+
+POST	/account								Application.createAccount
