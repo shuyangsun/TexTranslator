@@ -213,6 +213,17 @@ def detect(request):
         json_data = json.loads(request.body)
 
     text = json_data['text']
+    first_word = text.split()[0].lower()
+
+    if first_word == 'lang':
+        response_data = detect_locale(text)
+    else:
+        response_data = detect_lang(text)
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def detect_lang(text):
     detect_languagte(text)
     global result
     while result is None:
@@ -221,28 +232,19 @@ def detect(request):
         'text': result
     }
     result = None
+    return response_data
 
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-
-@csrf_exempt
-def locale(request):
-    json_data = None
-    if request.method == 'POST':
-        json_data = json.loads(request.body)
-
-    text = json_data['text']
+def detect_locale(text):
     text = text.split()[1]
     lower_case = text.lower()
     res_locale = lan_to_locale_dict[lower_case]
     if res_locale is not None:
         response_data = {
-            'lang_name': text,
             'text': lan_to_locale_dict[lower_case]
         }
     else:
         response_data = {
-            'lang_name': 'English',
             'text': 'en'
         }
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    return response_data
